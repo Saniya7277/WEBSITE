@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn Java with Chess</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(8, 60px);
+            grid-template-rows: repeat(8, 60px);
+            gap: 0;
+            border: 2px solid black;
+        }
+        .cell {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+        }
+        .white {
+            background-color: #eee;
+        }
+        .black {
+            background-color: #333;
+            color: #fff;
+        }
+        .question-container {
+            margin-top: 20px;
+            padding: 20px;
+            width: 400px;
+            background: #2c3e50;
+            color: white;
+            border-radius: 8px;
+            display: none;
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .score {
+            margin-top: 20px;
+            font-size: 20px;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Learn Java with Chess</h1>
+    <div class="board" id="chessBoard"></div>
+    <div class="question-container" id="questionContainer">
+        <p id="questionText">Question will appear here...</p>
+        <button onclick="answerQuestion(0)">Option 1</button>
+        <button onclick="answerQuestion(1)">Option 2</button>
+        <button onclick="answerQuestion(2)">Option 3</button>
+        <button onclick="answerQuestion(3)">Option 4</button>
+    </div>
+    <p class="score" id="score">Score: 0</p>
+
+    <script>
+        const chessBoard = document.getElementById('chessBoard');
+        const questionContainer = document.getElementById('questionContainer');
+        const questionText = document.getElementById('questionText');
+        const scoreText = document.getElementById('score');
+
+        let score = 0;
+
+        // Unicode symbols for chess pieces
+        const pieces = {
+            white: {
+                king: "♔", queen: "♕", rook: "♖", bishop: "♗", knight: "♘", pawn: "♙"
+            },
+            black: {
+                king: "♚", queen: "♛", rook: "♜", bishop: "♝", knight: "♞", pawn: "♟"
+            }
+        };
+
+        // Initial board setup
+        const boardSetup = [
+            [pieces.black.rook, pieces.black.knight, pieces.black.bishop, pieces.black.queen, pieces.black.king, pieces.black.bishop, pieces.black.knight, pieces.black.rook],
+            [pieces.black.pawn, pieces.black.pawn, pieces.black.pawn, pieces.black.pawn, pieces.black.pawn, pieces.black.pawn, pieces.black.pawn, pieces.black.pawn],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [null, null, null, null, null, null, null, null],
+            [pieces.white.pawn, pieces.white.pawn, pieces.white.pawn, pieces.white.pawn, pieces.white.pawn, pieces.white.pawn, pieces.white.pawn, pieces.white.pawn],
+            [pieces.white.rook, pieces.white.knight, pieces.white.bishop, pieces.white.queen, pieces.white.king, pieces.white.bishop, pieces.white.knight, pieces.white.rook]
+        ];
+
+        // Questions related to Java
+        const questions = [
+            {
+                question: "What is the correct syntax to declare a class in Java?",
+                options: ["class MyClass {}", "def MyClass {}", "MyClass: {}", "None of the above"],
+                correctAnswer: 0
+            },
+            {
+                question: "Which keyword is used to inherit a class in Java?",
+                options: ["inherits", "extends", "super", "parent"],
+                correctAnswer: 1
+            },
+            {
+                question: "Which method is used to print to the console in Java?",
+                options: ["System.print()", "console.log()", "System.out.println()", "print.console()"],
+                correctAnswer: 2
+            },
+            {
+                question: "Which of these is a valid Java data type?",
+                options: ["String", "char", "int", "All of the above"],
+                correctAnswer: 3
+            },
+            {
+                question: "What is the default value of a boolean in Java?",
+                options: ["true", "false", "null", "0"],
+                correctAnswer: 1
+            }
+        ];
+
+        let selectedCell = null;
+
+        // Create the chessboard
+        function createBoard() {
+            chessBoard.innerHTML = "";
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.classList.add((row + col) % 2 === 0 ? 'white' : 'black');
+                    cell.dataset.row = row;
+                    cell.dataset.col = col;
+                    cell.textContent = boardSetup[row][col] || ""; // Add piece if present
+                    cell.onclick = () => selectCell(cell, row, col);
+                    chessBoard.appendChild(cell);
+                }
+            }
+        }
+
+        // Handle cell selection and trigger a question
+        function selectCell(cell, row, col) {
+            if (boardSetup[row][col]) {
+                selectedCell = { row, col };
+                askQuestion();
+            }
+        }
+
+        // Show a random question
+        function askQuestion() {
+            const randomIndex = Math.floor(Math.random() * questions.length);
+            const question = questions[randomIndex];
+            questionText.textContent = question.question;
+
+            // Display options
+            const buttons = questionContainer.querySelectorAll('button');
+            buttons.forEach((btn, index) => {
+                btn.textContent = question.options[index];
+                btn.dataset.correct = index === question.correctAnswer ? 'true' : 'false';
+            });
+
+            questionContainer.style.display = 'block';
+        }
+
+        // Handle answering the question
+        function answerQuestion(selectedIndex) {
+            const selectedOption = questionContainer.querySelectorAll('button')[selectedIndex];
+            if (selectedOption.dataset.correct === 'true') {
+                alert('Correct Answer!');
+                score++;
+                scoreText.textContent = `Score: ${score}`;
+                questionContainer.style.display = 'none';
+            } else {
+                alert('Incorrect Answer. Try again!');
+            }
+        }
+
+        // Initialize the board
+        createBoard();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C Programming Quiz Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .container {
+            width: 600px; /* Increased container width */
+            padding: 20px;
+            background-color: #2c3e50;
+            color: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 20px;
+            background-color: #34495e;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #2c3e50;
+        }
+        textarea {
+            padding: 10px;
+            width: 100%; /* Make the textarea full width */
+            height: 300px; /* Increased height for more space */
+            margin-top: 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .feedback {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Learn C Programming</h1>
+    <p id="question">Question will appear here.</p>
+    <textarea id="userCode" placeholder="Type your C code here..."></textarea><br>
+    <button onclick="submitAnswer()">Submit Answer</button>
+    <div id="feedback" class="feedback"></div>
+</div>
+
+<script>
+    // The questions to be asked
+    const questions = [
+    {
+        question: "Write a C program to print the hello world statement.",
+        correctAnswer: `#include<stdio.h>
+int main(){
+    printf("hello world!");
+    return 0;
+}`,
+        nextQuestion: 1
+    },
+    {
+        question: "Write a program to print numbers from 1 to 10 using for loop.",
+        correctAnswer: `#include<stdio.h>
+int main(){
+    for(int i=1; i<=10; i++)
+        printf("%d ", i);
+    return 0;
+}`,
+        nextQuestion: 2
+    },
+    {
+        question: "Write a C program to add two numbers by taking 10 and 20 for a and b respectively and storing the result in c.",
+        correctAnswer: `#include<stdio.h>
+int main(){
+    int a = 10, b = 20;
+    int c = a + b;
+    printf("%d", c);
+    return 0;
+}`,
+        nextQuestion: 3
+    },
+    {
+        question: "Write a function to check if a string is a palindrome.",
+        correctAnswer: `int isPalindrome(char str[]) {
+    int start = 0, end = strlen(str) - 1;
+    while (start < end) {
+        if (str[start] != str[end]) {
+            return 0;
+        }
+        start++;
+        end--;
+    }
+    return 1;
+}`,
+        nextQuestion: 4
+    },
+    {
+        question: "Write a function to count vowels and consonants in a string.",
+        correctAnswer: `void countVowelsConsonants(char str[]) {
+    int vowels = 0, consonants = 0;
+    for (int i = 0; str[i] != '\\0'; i++) {
+        char ch = tolower(str[i]);
+        if (ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u') {
+            vowels++;
+        } else if ((ch >= 'a' && ch <= 'z')) {
+            consonants++;
+        }
+    }
+    printf("Vowels: %d\\n", vowels);
+    printf("Consonants: %d\\n", consonants);
+}`,
+        nextQuestion: 5
+    }
+];
+
+
+    let currentQuestionIndex = 0;
+
+    // Display the first question
+    displayQuestion();
+
+    // Function to display the current question
+    function displayQuestion() {
+        const questionText = questions[currentQuestionIndex].question;
+        document.getElementById('question').innerText = questionText;
+        document.getElementById('userCode').value = ''; // Clear previous code input
+        document.getElementById('feedback').innerText = ''; // Clear previous feedback
+    }
+
+    // Function to normalize and compare C code
+    function normalizeCode(code) {
+        return code
+            .replace(/\s+/g, '') // Remove all whitespaces (spaces, tabs, newlines)
+            .toLowerCase(); // Make the comparison case-insensitive
+    }
+
+    // Function to validate and move to the next question
+    function submitAnswer() {
+        const userCode = document.getElementById('userCode').value.trim();
+        const correctAnswer = questions[currentQuestionIndex].correctAnswer;
+
+        // Normalize both the user code and correct answer for comparison
+        if (normalizeCode(userCode) === normalizeCode(correctAnswer)) {
+            document.getElementById('feedback').innerText = 'Correct! Well done.';
+            currentQuestionIndex = questions[currentQuestionIndex].nextQuestion;
+            if (currentQuestionIndex < questions.length) {
+                setTimeout(displayQuestion, 1000); // Display the next question after a short delay
+            } else {
+                document.getElementById('feedback').innerText = 'Congratulations! You completed all the questions.';
+            }
+        } else {
+            document.getElementById('feedback').innerText = 'Incorrect. Please try again.';
+        }
+    }
+</script>
+
+</body>
+</html>

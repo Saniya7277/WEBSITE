@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="simple.html" href="simple.html">
+
+    <title>{{ lesson.title }}</title>
+</head>
+<body>
+    <header>
+        <h1 style="
+    color: #4CAF50; 
+    text-align: center; 
+    font-family: Arial, sans-serif; 
+    text-shadow: 2px 2px 5px black; 
+    font-size: 3rem; 
+    margin: 20px 0; 
+    border-bottom: 2px solid #4CAF50; 
+    padding-bottom: 10px;">
+    Python
+</h1>
+
+    </header>
+    <main>
+        
+        </div>
+        <div id="feedback"></div>
+    </main>
+
+    <script>
+        const lessonId = { lesson_id };
+        document.querySelectorAll('.option').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const answerId = btn.dataset.answer;
+                fetch('/submit-answer', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lesson_id: lessonId, answer_id: parseInt(answerId) })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const feedback = document.getElementById('feedback');
+                    feedback.innerHTML = data.correct
+                        ? '<p style="color: green;">Correct! 🎉</p>'
+                        : '<p style="color: red;">Wrong answer. Try again! ❌</p>';
+                });
+            });
+        });
+    </script>
+</body>
+<a href="C:\Users\saniy\Desktop\sanman\simple.html"
+a href="quiz.html" style="
+    font-size: 1.5rem; 
+    color: #FF5733; 
+    font-family: Arial, sans-serif; 
+    text-decoration: none; 
+    font-weight: bold;">
+    Let's start a python quiz</a>
+
+</html>
+<

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe Game in C++</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4c2c2; /* Baby pink background color */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            color: #333; /* Make the title color darker for contrast */
+            margin-bottom: 20px;
+        }
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            background-color: #fff;
+            border: 1px solid #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .cell.taken {
+            pointer-events: none;
+        }
+        .controls {
+            margin-top: 20px;
+            text-align: center;
+        }
+        textarea {
+            width: 300px;
+            height: 100px;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #444;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Tic-Tac-Toe Game</h1>
+    <div class="game-board" id="gameBoard">
+        <!-- Cells will be dynamically generated here -->
+    </div>
+
+    <div class="controls">
+        <textarea id="userMove" placeholder="Write your C++ function here for your move..."></textarea><br>
+        <button onclick="submitMove()">Submit Move</button>
+    </div>
+
+    <div id="gameStatus"></div>
+
+    <script>
+        // Initialize the game board
+        const board = [
+            ['', '', ''],
+            ['', '', ''],
+            ['', '', '']
+        ];
+        let currentPlayer = 'X';
+        let gameOver = false;
+
+        // Create a dynamic Tic-Tac-Toe board
+        const gameBoardElement = document.getElementById('gameBoard');
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.dataset.row = i;
+                cell.dataset.col = j;
+                cell.addEventListener('click', handleCellClick);
+                gameBoardElement.appendChild(cell);
+            }
+        }
+
+        // Function to handle cell click
+        function handleCellClick(event) {
+            if (gameOver) return;
+            const row = event.target.dataset.row;
+            const col = event.target.dataset.col;
+
+            if (board[row][col] !== '') return; // Cell already taken
+
+            board[row][col] = currentPlayer;
+            event.target.textContent = currentPlayer;
+
+            if (checkWin(currentPlayer)) {
+                document.getElementById('gameStatus').textContent = `${currentPlayer} wins!`;
+                gameOver = true;
+            } else if (board.flat().every(cell => cell !== '')) {
+                document.getElementById('gameStatus').textContent = 'It\'s a tie!';
+                gameOver = true;
+            } else {
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X'; // Switch player
+            }
+        }
+
+        // Function to check if a player has won
+        function checkWin(player) {
+            // Check rows, columns, and diagonals
+            for (let i = 0; i < 3; i++) {
+                if (board[i].every(cell => cell === player)) return true;
+                if (board.every(row => row[i] === player)) return true;
+            }
+            if (board[0][0] === player && board[1][1] === player && board[2][2] === player) return true;
+            if (board[0][2] === player && board[1][1] === player && board[2][0] === player) return true;
+
+            return false;
+        }
+
+        // Function to submit the user's C++ function
+        function submitMove() {
+            const userCode = document.getElementById('userMove').value.trim();
+
+            // Check if the user entered a valid C++ function (This is just a basic check)
+            if (userCode === '') {
+                alert("Please enter a C++ function!");
+                return;
+            }
+
+            // Check if the move is valid and where the user wants to place their symbol
+            // Here, you would execute or simulate the move using user input (C++ logic).
+            // For the sake of simplicity, we're simulating a move based on the user input.
+
+            const [row, col] = getUserMove(userCode);
+
+            if (board[row][col] === '') {
+                board[row][col] = currentPlayer;
+                const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+                cell.textContent = currentPlayer;
+
+                if (checkWin(currentPlayer)) {
+                    document.getElementById('gameStatus').textContent = `${currentPlayer} wins!`;
+                    gameOver = true;
+                } else if (board.flat().every(cell => cell !== '')) {
+                    document.getElementById('gameStatus').textContent = 'It\'s a tie!';
+                    gameOver = true;
+                } else {
+                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X'; // Switch player
+                }
+            } else {
+                alert("Invalid move! Cell is already taken.");
+            }
+        }
+
+        // Simulate extracting user move from C++ code
+        // For simplicity, just randomly return a valid row/col
+        function getUserMove(userCode) {
+            const row = Math.floor(Math.random() * 3); // Simulate random move for now
+            const col = Math.floor(Math.random() * 3);
+            return [row, col];
+        }
+    </script>
+
+</body>
+</html>
